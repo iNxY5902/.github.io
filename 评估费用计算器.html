@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>费用计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px 0;
+            background: linear-gradient(120deg, #1a3a6c, #2c5282);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+        
+        .card-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f4f8;
+            color: #2c5282;
+            font-size: 1.5rem;
+        }
+        
+        .card-title i {
+            margin-right: 12px;
+            font-size: 1.8rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .input-label {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+        
+        .input-container {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        #asset {
+            width: 280px;
+            padding: 16px 20px 16px 50px;
+            font-size: 1.3rem;
+            border: 2px solid #cbd5e0;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        #asset:focus {
+            border-color: #3182ce;
+            box-shadow: 0 4px 20px rgba(49, 130, 206, 0.25);
+        }
+        
+        .currency-icon {
+            position: absolute;
+            left: 20px;
+            font-size: 1.2rem;
+            color: #718096;
+        }
+        
+        .unit-label {
+            margin-left: 12px;
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 1.1rem;
+        }
+        
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-calculate {
+            background: linear-gradient(120deg, #2c5282, #1a3a6c);
+            color: white;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 82, 130, 0.4);
+        }
+        
+        .btn-reset {
+            background: linear-gradient(120deg, #718096, #4a5568);
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result-container {
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #f8fafc, #edf2f7);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #2d3748;
+            font-weight: 700;
+        }
+        
+        .total-fee {
+            text-align: center;
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #2c5282;
+            margin: 15px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: linear-gradient(to right, #1a3a6c, #2c5282, #3182ce);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .fee-label {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #4a5568;
+            margin-bottom: 25px;
+        }
+        
+        .breakdown-title {
+            font-size: 1.4rem;
+            margin: 25px 0 15px;
+            color: #2c5282;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .breakdown-table th {
+            background: linear-gradient(120deg, #2c5282, #1a3a6c);
+            color: white;
+            font-weight: 600;
+            padding: 14px 15px;
+            text-align: left;
+        }
+        
+        .breakdown-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+        
+        .breakdown-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .breakdown-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .breakdown-table tr:hover {
+            background-color: #ebf4ff;
+        }
+        
+        .highlight {
+            font-weight: 700;
+            color: #2c5282;
+        }
+        
+        .fee-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .fee-table th, .fee-table td {
+            padding: 14px 15px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .fee-table th {
+            background: linear-gradient(120deg, #2c5282, #1a3a6c);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .fee-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .fee-table tr:hover {
+            background-color: #ebf4ff;
+        }
+        
+        .tier-1 { background-color: #bee3f8; }
+        .tier-2 { background-color: #c6f6d5; }
+        .tier-3 { background-color: #fed7d7; }
+        .tier-4 { background-color: #feebc8; }
+        .tier-5 { background-color: #e9d8fd; }
+        .tier-6 { background-color: #c3fae8; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: #4a5568;
+            font-size: 0.95rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .note {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.1rem;
+            }
+            
+            #asset {
+                width: 240px;
+                padding: 14px 20px 14px 45px;
+                font-size: 1.2rem;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+            
+            .total-fee {
+                font-size: 2.6rem;
+            }
+            
+            .breakdown-table th, 
+            .breakdown-table td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .fee-table th, 
+            .fee-table td {
+                padding: 10px 8px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 18px;
+            }
+            
+            #asset {
+                width: 200px;
+                padding: 12px 15px 12px 40px;
+                font-size: 1.1rem;
+            }
+            
+            .unit-label {
+                font-size: 1rem;
+                margin-left: 5px;
+            }
+            
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+            
+            .total-fee {
+                font-size: 2.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> 费用计算器</h1>
+            <p class="subtitle"></p>
+        </header>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-chart-line"></i>收费标准说明</h2>
+            <p style="margin-bottom: 15px; color: #4a5568;">本计算器采用累进计费方式：资产金额超过各档位的部分按对应费率计算，各档费用累加得出总费用。</p>
+            
+            <table class="fee-table">
+                <thead>
+                    <tr>
+                        <th>资产范围（万元）</th>
+                        <th>费率</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="tier-1">
+                        <td>0 - 100</td>
+                        <td>9‰</td>
+                        <td>基础费率</td>
+                    </tr>
+                    <tr class="tier-2">
+                        <td>100 - 1,000</td>
+                        <td>4‰</td>
+                        <td>超过100万部分</td>
+                    </tr>
+                    <tr class="tier-3">
+                        <td>1,000 - 5,000</td>
+                        <td>1.2‰</td>
+                        <td>超过1,000万部分</td>
+                    </tr>
+                    <tr class="tier-4">
+                        <td>5,000 - 10,000</td>
+                        <td>0.75‰</td>
+                        <td>超过5,000万部分</td>
+                    </tr>
+                    <tr class="tier-5">
+                        <td>10,000 - 100,000</td>
+                        <td>0.15‰</td>
+                        <td>超过10,000万部分</td>
+                    </tr>
+                    <tr class="tier-6">
+                        <td>100,000以上</td>
+                        <td>0.1‰</td>
+                        <td>超过100,000万部分</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="note">
+                <strong>注：皖价服[2010]151号文件
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="card-title"><i class="fas fa-calculator"></i>费用计算</h2>
+            <div class="input-group">
+                <label class="input-label">请输入资产金额</label>
+                <div class="input-container">
+                    <i class="fas fa-yen-sign currency-icon"></i>
+                    <input type="number" id="asset" placeholder="输入资产金额" min="0" step="0.01">
+                    <span class="unit-label">万元</span>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-calculate" onclick="calculate()">
+                        <i class="fas fa-equals"></i> 计算费用
+                    </button>
+                    <button class="btn btn-reset" onclick="resetForm()">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="result-title">计算结果</div>
+                <div class="total-fee" id="totalFee">0.00</div>
+                <div class="fee-label">应付总费用（人民币万元）</div>
+                
+                <div class="breakdown-title"><i class="fas fa-list"></i> 费用明细分解</div>
+                <table class="breakdown-table">
+                    <thead>
+                        <tr>
+                            <th>资产档位（万元）</th>
+                            <th>计费金额（万元）</th>
+                            <th>费率</th>
+                            <th>该档费用（元）</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownBody">
+                        <!-- 动态生成 -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold; padding: 12px 15px; background-color: #f8fafc;">总计：</td>
+                            <td class="highlight" id="totalCell">0.00 元</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 费用计算</p>
+            <p style="margin-top: 8px; color: #718096; font-size: 0.9rem;">注：1万元 = 10,000元 | 费率单位：‰（千分比）</p>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            const assetInput = document.getElementById('asset');
+            const asset = parseFloat(assetInput.value);
+            const resultContainer = document.getElementById('resultContainer');
+            const totalFeeElement = document.getElementById('totalFee');
+            const breakdownBody = document.getElementById('breakdownBody');
+            const totalCell = document.getElementById('totalCell');
+            
+            // 验证输入
+            if (isNaN(asset) || asset < 0) {
+                alert("请输入有效的资产金额（非负数字）！");
+                assetInput.focus();
+                return;
+            }
+            
+            if (asset === 0) {
+                alert("资产金额不能为0，请输入有效金额！");
+                assetInput.focus();
+                return;
+            }
+            
+            // 计算各档费用
+            let fee = 0;
+            let breakdown = [];
+            let remaining = asset;
+            
+            // 档位1: 0-100万
+            if (remaining > 0) {
+                const amount = Math.min(remaining, 100);
+                const tierFee = amount * 0.009;
+                fee += tierFee;
+                breakdown.push({
+                    range: "0 - 100",
+                    amount: amount.toFixed(2),
+                    rate: "9‰",
+                    fee: tierFee.toFixed(2)
+                });
+                remaining -= amount;
+            }
+            
+            // 档位2: 100-1000万
+            if (remaining > 0) {
+                const amount = Math.min(remaining, 900);
+                const tierFee = amount * 0.004;
+                fee += tierFee;
+                breakdown.push({
+                    range: "100 - 1,000",
+                    amount: amount.toFixed(2),
+                    rate: "4‰",
+                    fee: tierFee.toFixed(2)
+                });
+                remaining -= amount;
+            }
+            
+            // 档位3: 1000-5000万
+            if (remaining > 0) {
+                const amount = Math.min(remaining, 4000);
+                const tierFee = amount * 0.0012;
+                fee += tierFee;
+                breakdown.push({
+                    range: "1,000 - 5,000",
+                    amount: amount.toFixed(2),
+                    rate: "1.2‰",
+                    fee: tierFee.toFixed(2)
+                });
+                remaining -= amount;
+            }
+            
+            // 档位4: 5000-10000万
+            if (remaining > 0) {
+                const amount = Math.min(remaining, 5000);
+                const tierFee = amount * 0.00075;
+                fee += tierFee;
+                breakdown.push({
+                    range: "5,000 - 10,000",
+                    amount: amount.toFixed(2),
+                    rate: "0.75‰",
+                    fee: tierFee.toFixed(2)
+                });
+                remaining -= amount;
+            }
+            
+            // 档位5: 10000-100000万
+            if (remaining > 0) {
+                const amount = Math.min(remaining, 90000);
+                const tierFee = amount * 0.00015;
+                fee += tierFee;
+                breakdown.push({
+                    range: "10,000 - 100,000",
+                    amount: amount.toFixed(2),
+                    rate: "0.15‰",
+                    fee: tierFee.toFixed(2)
+                });
+                remaining -= amount;
+            }
+            
+            // 档位6: 100000万以上
+            if (remaining > 0) {
+                const amount = remaining;
+                const tierFee = amount * 0.0001;
+                fee += tierFee;
+                breakdown.push({
+                    range: "100,000以上",
+                    amount: amount.toFixed(2),
+                    rate: "0.1‰",
+                    fee: tierFee.toFixed(2)
+                });
+            }
+            
+            // 显示结果
+            totalFeeElement.textContent = fee.toFixed(2);
+            totalCell.textContent = fee.toFixed(2) + " 元";
+            
+            // 生成明细表格
+            breakdownBody.innerHTML = '';
+            breakdown.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.range}</td>
+                    <td>${parseFloat(item.amount).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${item.rate}</td>
+                    <td>${parseFloat(item.fee).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                `;
+                breakdownBody.appendChild(row);
+            });
+            
+            // 显示结果区域
+            resultContainer.style.display = 'block';
+            
+            // 滚动到结果区域
+            resultContainer.scrollIntoView({behavior: 'smooth', block: 'center'});
+        }
+        
+        function resetForm() {
+            document.getElementById('asset').value = '';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('asset').focus();
+        }
+        
+        // 允许按回车键计算
+        document.getElementById('asset').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+        
+        // 页面加载后聚焦输入框
+        window.onload = function() {
+            document.getElementById('asset').focus();
+        };
+    </script>
+</body>
+</html>
