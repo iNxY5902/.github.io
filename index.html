@@ -38,17 +38,6 @@
             overflow: hidden;
         }
         
-        header::before {
-            content: "";
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-            transform: rotate(30deg);
-        }
-        
         h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
@@ -108,15 +97,17 @@
             font-weight: 500;
         }
         
+        /* 统一的输入框容器 */
         .input-container {
-            display: flex;
-            align-items: center;
             position: relative;
+            width: 100%;
+            max-width: 380px;
         }
         
-        #asset {
-            width: 280px;
-            padding: 16px 20px 16px 50px;
+        /* 统一的输入框样式 */
+        .input-field {
+            width: 100%;
+            padding: 16px 60px 16px 50px; /* 左右内边距分别为图标和单位留空间 */
             font-size: 1.3rem;
             border: 2px solid #cbd5e0;
             border-radius: 50px;
@@ -125,31 +116,38 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
         
-        #asset:focus {
+        .input-field:focus {
             border-color: #3182ce;
             box-shadow: 0 4px 20px rgba(49, 130, 206, 0.25);
         }
         
-        .currency-icon {
+        /* 统一的图标样式 */
+        .input-icon {
             position: absolute;
             left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
             font-size: 1.2rem;
             color: #718096;
         }
         
-        .unit-label {
-            margin-left: 12px;
-            font-weight: 500;
-            color: #4a5568;
+        /* 统一的单位标签 (绝对定位在输入框内部右侧) */
+        .input-suffix {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #718096;
             font-size: 1.1rem;
+            pointer-events: none; /* 点击穿透，不影响输入 */
         }
         
         .btn-container {
             display: flex;
             gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+            margin-top: 25px;
             justify-content: center;
+            flex-wrap: wrap;
         }
         
         .btn {
@@ -186,18 +184,15 @@
             box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
         }
         
-        .btn:active {
-            transform: translateY(1px);
-        }
-        
         .result-container {
             margin-top: 25px;
-            padding: 25px;
+            padding: 30px;
             border-radius: 16px;
             background: linear-gradient(135deg, #f8fafc, #edf2f7);
             border: 1px solid #e2e8f0;
             display: none;
             animation: fadeIn 0.5s ease-out;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
         
         @keyframes fadeIn {
@@ -208,60 +203,169 @@
         .result-title {
             text-align: center;
             font-size: 1.8rem;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             color: #2d3748;
             font-weight: 700;
+            position: relative;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #cbd5e0;
         }
         
-        .total-fee {
+        /* 重构价格显示区域 */
+        .price-display {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 6px 20px rgba(44, 82, 130, 0.12);
+            border: 1px solid #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .price-display::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #1a3a6c, #2c5282, #3182ce);
+        }
+        
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 15px;
+            padding: 12px 0;
+        }
+        
+        .price-row:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .price-label {
+            font-size: 1.7rem;
+            color: #4a5568;
+            font-weight: 600;
+            min-width: 110px;
+            text-align: right;
+            letter-spacing: 1px;
+        }
+        
+        .price-unit {
+            font-size: 1.6rem;
+            color: #4a5568;
+            font-weight: 500;
+            margin-left: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        .original-price {
+            font-size: 2.3rem;
+            color: #718096;
+            font-weight: 600;
+            min-width: 160px;
             text-align: center;
-            font-size: 3.2rem;
-            font-weight: 800;
-            color: #2c5282;
-            margin: 15px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            letter-spacing: -0.5px;
+        }
+        
+        .discount-price {
+            font-size: 3.4rem;
             background: linear-gradient(to right, #1a3a6c, #2c5282, #3182ce);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            letter-spacing: -0.5px;
+            font-weight: 800;
+            line-height: 1.1;
+            min-width: 240px;
+            text-align: center;
+            letter-spacing: -1px;
+            margin: 10px 0 5px;
+            text-shadow: 0 2px 4px rgba(44, 82, 130, 0.15);
+        }
+        
+        /* 单一价格显示样式 */
+        .single-price-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .single-price-label {
+            font-size: 1.6rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .single-price {
+            font-size: 3.6rem;
+            background: linear-gradient(to right, #1a3a6c, #2c5282, #3182ce);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(44, 82, 130, 0.15);
+        }
+        
+        .single-price-unit {
+            font-size: 1.8rem;
+            color: #4a5568;
+            font-weight: 500;
+            margin-left: 10px;
         }
         
         .fee-label {
             text-align: center;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             color: #4a5568;
-            margin-bottom: 25px;
+            margin: 25px 0 20px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
         
         .breakdown-title {
-            font-size: 1.4rem;
-            margin: 25px 0 15px;
+            font-size: 1.5rem;
+            margin: 25px 0 20px;
             color: #2c5282;
             text-align: center;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         
         .breakdown-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
             border-radius: 12px;
             overflow: hidden;
+            background: white;
         }
         
         .breakdown-table th {
             background: linear-gradient(120deg, #2c5282, #1a3a6c);
             color: white;
             font-weight: 600;
-            padding: 14px 15px;
-            text-align: left;
+            padding: 16px 15px;
+            text-align: center;
+            font-size: 1.1rem;
         }
         
         .breakdown-table td {
-            padding: 12px 15px;
+            padding: 14px 15px;
             border-bottom: 1px solid #edf2f7;
+            text-align: center;
+            font-size: 1.05rem;
         }
         
         .breakdown-table tr:last-child td {
@@ -279,6 +383,24 @@
         .highlight {
             font-weight: 700;
             color: #2c5282;
+        }
+        
+        .total-label {
+            text-align: right !important;
+            font-weight: bold;
+            padding: 16px 15px !important;
+            background-color: #f0f7ff !important;
+            font-size: 1.35rem !important;
+            color: #2c5282 !important;
+            letter-spacing: 0.5px;
+        }
+        
+        .total-value {
+            font-size: 1.6rem !important;
+            padding: 16px !important;
+            background-color: #e6f0ff !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.5px;
         }
         
         .fee-table {
@@ -303,17 +425,6 @@
             background-color: #f8fafc;
         }
         
-        .fee-table tr:hover {
-            background-color: #ebf4ff;
-        }
-        
-        .tier-1 { background-color: #bee3f8; }
-        .tier-2 { background-color: #c6f6d5; }
-        .tier-3 { background-color: #fed7d7; }
-        .tier-4 { background-color: #feebc8; }
-        .tier-5 { background-color: #e9d8fd; }
-        .tier-6 { background-color: #c3fae8; }
-        
         .footer {
             text-align: center;
             margin-top: 30px;
@@ -332,76 +443,56 @@
             font-size: 0.95rem;
         }
         
-        @media (max-width: 768px) {
-            .card {
-                padding: 20px;
+        @media (max-width: 480px) {
+            .input-field {
+                width: 100%;
+                padding: 14px 50px 14px 45px;
+                font-size: 1.1rem;
             }
             
-            h1 {
-                font-size: 2.1rem;
-            }
-            
-            #asset {
-                width: 240px;
-                padding: 14px 20px 14px 45px;
-                font-size: 1.2rem;
-            }
-            
-            .btn {
-                padding: 12px 25px;
+            .input-icon, .input-suffix {
                 font-size: 1rem;
             }
             
-            .total-fee {
+            .price-display {
+                padding: 20px 15px;
+            }
+            
+            .price-label {
+                font-size: 1.4rem;
+                min-width: 80px;
+            }
+            
+            .price-unit {
+                font-size: 1.3rem;
+            }
+            
+            .original-price {
+                font-size: 1.9rem;
+                min-width: 120px;
+            }
+            
+            .discount-price {
                 font-size: 2.6rem;
+                min-width: 180px;
+            }
+            
+            .single-price {
+                font-size: 2.8rem;
+            }
+            
+            .single-price-unit {
+                font-size: 1.5rem;
             }
             
             .breakdown-table th, 
             .breakdown-table td {
                 padding: 10px 8px;
-                font-size: 0.9rem;
+                font-size: 0.95rem;
             }
             
-            .fee-table th, 
-            .fee-table td {
-                padding: 10px 8px;
-                font-size: 0.9rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 18px;
-            }
-            
-            #asset {
-                width: 200px;
-                padding: 12px 15px 12px 40px;
-                font-size: 1.1rem;
-            }
-            
-            .unit-label {
-                font-size: 1rem;
-                margin-left: 5px;
-            }
-            
-            .btn-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn {
-                width: 100%;
-                max-width: 280px;
-                justify-content: center;
-            }
-            
-            .total-fee {
-                font-size: 2.3rem;
+            .total-label, .total-value {
+                font-size: 1.2rem !important;
             }
         }
     </style>
@@ -410,7 +501,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-calculator"></i> 费用计算器</h1>
-            <p class="subtitle"></p>
+            <p class="subtitle">资产累进费率计算工具</p>
         </header>
         
         <div class="card">
@@ -460,32 +551,53 @@
             </table>
             
             <div class="note">
-                <strong>注：皖价服[2010]151号文件
+                <strong>注：皖价服151号文件</strong>
             </div>
         </div>
         
         <div class="card">
             <h2 class="card-title"><i class="fas fa-calculator"></i>费用计算</h2>
+            
+            <!-- 资产金额输入 -->
             <div class="input-group">
                 <label class="input-label">请输入资产金额</label>
                 <div class="input-container">
-                    <i class="fas fa-yen-sign currency-icon"></i>
-                    <input type="number" id="asset" placeholder="输入资产金额" min="0" step="0.01">
-                    <span class="unit-label">万元</span>
-                </div>
-                <div class="btn-container">
-                    <button class="btn btn-calculate" onclick="calculate()">
-                        <i class="fas fa-equals"></i> 计算费用
-                    </button>
-                    <button class="btn btn-reset" onclick="resetForm()">
-                        <i class="fas fa-redo"></i> 重置
-                    </button>
+                    <i class="fas fa-yen-sign input-icon"></i>
+                    <input type="number" id="asset" class="input-field" placeholder="输入资产金额" min="0" step="0.01">
+                    <span class="input-suffix">万元</span>
                 </div>
             </div>
-            
+
+            <!-- 折扣率输入 (样式与金额框一致) -->
+            <div class="input-group">
+                <label class="input-label">请输入折扣率</label>
+                <div class="input-container">
+                    <!-- 使用乘号图标，代表打几折 -->
+                    <i class="fas fa-times input-icon"></i> 
+                    <input type="number" id="discount" class="input-field" placeholder="输入折扣" min="0" max="1" step="0.01" value="1">
+                    <span class="input-suffix">倍 (1为原价)</span>
+                </div>
+            </div>
+
+            <!-- 按钮 -->
+            <div class="btn-container">
+                <button class="btn btn-calculate" onclick="calculate()">
+                    <i class="fas fa-equals"></i> 计算费用
+                </button>
+                <button class="btn btn-reset" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> 重置
+                </button>
+            </div>
+
+            <!-- 结果显示 -->
             <div class="result-container" id="resultContainer">
                 <div class="result-title">计算结果</div>
-                <div class="total-fee" id="totalFee">0.00</div>
+                
+                <!-- 价格展示区（根据折扣率动态变化） -->
+                <div id="priceSection">
+                    <!-- 动态生成内容 -->
+                </div>
+                
                 <div class="fee-label">应付总费用（人民币万元）</div>
                 
                 <div class="breakdown-title"><i class="fas fa-list"></i> 费用明细分解</div>
@@ -503,8 +615,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="3" style="text-align: right; font-weight: bold; padding: 12px 15px; background-color: #f8fafc;">总计：</td>
-                            <td class="highlight" id="totalCell">0.00 元</td>
+                            <td colspan="3" class="total-label">总计：</td>
+                            <td class="total-value highlight" id="totalCell">0.00 元</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -512,7 +624,7 @@
         </div>
         
         <div class="footer">
-            <p>© 2026 费用计算</p>
+            <p>© 2026 费用计算器</p>
             <p style="margin-top: 8px; color: #718096; font-size: 0.9rem;">注：1万元 = 10,000元 | 费率单位：‰（千分比）</p>
         </div>
     </div>
@@ -520,9 +632,12 @@
     <script>
         function calculate() {
             const assetInput = document.getElementById('asset');
+            const discountInput = document.getElementById('discount');
             const asset = parseFloat(assetInput.value);
+            const discount = parseFloat(discountInput.value) || 1;
+            
             const resultContainer = document.getElementById('resultContainer');
-            const totalFeeElement = document.getElementById('totalFee');
+            const priceSection = document.getElementById('priceSection');
             const breakdownBody = document.getElementById('breakdownBody');
             const totalCell = document.getElementById('totalCell');
             
@@ -539,7 +654,14 @@
                 return;
             }
             
-            // 计算各档费用
+            // 验证折扣
+            if (isNaN(discount) || discount < 0 || discount > 1) {
+                alert("请输入有效的折扣率（0到1之间）！");
+                discountInput.focus();
+                return;
+            }
+
+            // 计算逻辑
             let fee = 0;
             let breakdown = [];
             let remaining = asset;
@@ -626,49 +748,84 @@
                     fee: tierFee.toFixed(2)
                 });
             }
-            
-            // 显示结果
-            totalFeeElement.textContent = fee.toFixed(2);
-            totalCell.textContent = fee.toFixed(2) + " 元";
-            
-            // 生成明细表格
+
+            // 应用折扣
+            const originalFee = fee;
+            const discountedFee = fee * discount;
+
+            // 根据折扣率动态生成价格显示
+            if (Math.abs(discount - 1) < 0.001) { // 折扣率为1，显示单一价格
+                priceSection.innerHTML = `
+                    <div class="single-price-container">
+                        <div class="single-price-label">应付总费用：</div>
+                        <div class="single-price">${originalFee.toFixed(2)}</div>
+                        <div class="single-price-unit">万元</div>
+                    </div>
+                `;
+            } else { // 有折扣，显示原价和折扣价
+                priceSection.innerHTML = `
+                    <div class="price-display">
+                        <div class="price-row">
+                            <span class="price-label">原价：</span>
+                            <span class="original-price">${originalFee.toFixed(2)}</span>
+                            <span class="price-unit">万元</span>
+                        </div>
+                        <div class="price-row">
+                            <span class="price-label">折后价：</span>
+                            <span class="discount-price">${discountedFee.toFixed(2)}</span>
+                            <span class="price-unit">万元</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // 将万元转换为元用于明细表显示（1万元=10000元）
+            totalCell.textContent = `${(discountedFee * 10000).toFixed(2)} 元`;
+
+            // 清空并重新填充明细表
             breakdownBody.innerHTML = '';
             breakdown.forEach(item => {
                 const row = document.createElement('tr');
+                // 将该档费用从万元转换为元（乘以10000）
+                const feeInYuan = (parseFloat(item.fee) * 10000).toFixed(2);
                 row.innerHTML = `
                     <td>${item.range}</td>
                     <td>${parseFloat(item.amount).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                     <td>${item.rate}</td>
-                    <td>${parseFloat(item.fee).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${parseFloat(feeInYuan).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 `;
                 breakdownBody.appendChild(row);
             });
-            
+
             // 显示结果区域
             resultContainer.style.display = 'block';
-            
-            // 滚动到结果区域
-            resultContainer.scrollIntoView({behavior: 'smooth', block: 'center'});
+            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         function resetForm() {
             document.getElementById('asset').value = '';
+            document.getElementById('discount').value = '1'; // 重置为默认值
             document.getElementById('resultContainer').style.display = 'none';
             document.getElementById('asset').focus();
         }
-        
-        // 允许按回车键计算
+
+        // 回车键触发计算
         document.getElementById('asset').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 calculate();
             }
         });
         
-        // 页面加载后聚焦输入框
+        document.getElementById('discount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+
+        // 页面加载后聚焦资产输入框
         window.onload = function() {
             document.getElementById('asset').focus();
         };
     </script>
 </body>
-
 </html>
