@@ -331,82 +331,129 @@
         }
         
         .breakdown-title {
-            font-size: 1.5rem;
+            font-size: 1.7rem;
             margin: 25px 0 20px;
-            color: #2c5282;
+            color: #1a3a6c;
             text-align: center;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 12px;
         }
         
+        .breakdown-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #1a3a6c, #3182ce);
+            border-radius: 3px;
+        }
+        
+        /* 费用明细表格美化 - 新样式 */
         .breakdown-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-            border-radius: 12px;
+            margin: 25px 0;
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
             background: white;
+            transition: transform 0.3s ease;
+        }
+        
+        .breakdown-table:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(44, 82, 130, 0.18);
         }
         
         .breakdown-table th {
             background: linear-gradient(120deg, #2c5282, #1a3a6c);
             color: white;
-            font-weight: 600;
-            padding: 16px 15px;
+            font-weight: 700;
+            padding: 18px 15px;
             text-align: center;
+            font-size: 1.15rem;
+            letter-spacing: 0.5px;
+        }
+        
+        /* 表格单元格统一内边距和字体 */
+        .breakdown-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 1.05rem;
+            transition: background-color 0.2s ease;
+        }
+        
+        /* 不同档位使用不同背景色进行视觉区分 */
+        .breakdown-table tr.tier-1 td { background-color: #f0f9ff; }
+        .breakdown-table tr.tier-2 td { background-color: #e6f7ff; }
+        .breakdown-table tr.tier-3 td { background-color: #dbeafe; }
+        .breakdown-table tr.tier-4 td { background-color: #bfdbfe; }
+        .breakdown-table tr.tier-5 td { background-color: #93c5fd; }
+        .breakdown-table tr.tier-6 td { background-color: #60a5fa; }
+        
+        /* 悬停效果增强 - 高亮整行 */
+        .breakdown-table tr:hover td {
+            background-color: #dbeafe !important;
+            color: #1e3a8a;
+            font-weight: 600;
+        }
+        
+        /* 金额列右对齐，提高可读性 */
+        .breakdown-table td:nth-child(2),
+        .breakdown-table td:nth-child(4) {
+            font-family: 'Consolas', monospace;
+            font-weight: 600;
+            text-align: right;
+            color: #1e3a8a;
+        }
+        
+        /* 费率列特殊样式 */
+        .breakdown-table td:nth-child(3) {
+            font-weight: 700;
+            color: #1e40af;
             font-size: 1.1rem;
         }
         
-        .breakdown-table td {
-            padding: 14px 15px;
-            border-bottom: 1px solid #edf2f7;
-            text-align: center;
-            font-size: 1.05rem;
+        /* 总计行特殊样式 */
+        #originalTotalRow td,
+        #discountRateRow td,
+        tfoot tr td {
+            font-weight: 800 !important;
+            font-size: 1.25rem !important;
+            background-color: #f0f7ff !important;
+            border-top: 2px solid #3182ce !important;
         }
         
-        .breakdown-table tr:last-child td {
-            border-bottom: none;
-        }
-        
-        .breakdown-table tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        
-        .breakdown-table tr:hover {
-            background-color: #ebf4ff;
-        }
-        
-        .highlight {
-            font-weight: 700;
-            color: #2c5282;
-        }
-        
+        /* 总计标签样式 */
         .total-label {
             text-align: right !important;
-            font-weight: bold;
-            padding: 16px 15px !important;
-            background-color: #f0f7ff !important;
-            font-size: 1.35rem !important;
-            color: #2c5282 !important;
-            letter-spacing: 0.5px;
+            padding-right: 20px !important;
+            color: #1a3a6c !important;
+            letter-spacing: 0.8px;
         }
         
+        /* 总计数值样式 */
         .total-value {
-            font-size: 1.6rem !important;
-            padding: 16px !important;
-            background-color: #e6f0ff !important;
-            font-weight: 800 !important;
-            letter-spacing: 0.5px;
+            color: #1e3a8a !important;
+            letter-spacing: 1px;
+        }
+        
+        /* 移除最后一行底部边框 */
+        .breakdown-table tr:last-child td {
+            border-bottom: none;
         }
         
         .fee-table {
             width: 100%;
             border-collapse: collapse;
             margin: 15px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
         
         .fee-table th, .fee-table td {
@@ -423,6 +470,10 @@
         
         .fee-table tr:nth-child(even) {
             background-color: #f8fafc;
+        }
+        
+        .fee-table tr:hover {
+            background-color: #ebf4ff;
         }
         
         .footer {
@@ -485,7 +536,7 @@
                 font-size: 1.5rem;
             }
             
-            .breakdown-table th, 
+            .breakdown-table th,
             .breakdown-table td {
                 padding: 10px 8px;
                 font-size: 0.95rem;
@@ -507,7 +558,6 @@
         <div class="card">
             <h2 class="card-title"><i class="fas fa-chart-line"></i>收费标准说明</h2>
             <p style="margin-bottom: 15px; color: #4a5568;">本计算器采用累进计费方式：资产金额超过各档位的部分按对应费率计算，各档费用累加得出总费用。</p>
-            
             <table class="fee-table">
                 <thead>
                     <tr>
@@ -549,10 +599,7 @@
                     </tr>
                 </tbody>
             </table>
-            
-            <div class="note">
-                <strong>注：皖价服[2010]151号文件</strong>
-            </div>
+            <div class="note"><strong>注：皖价服[2010]151号文件</strong></div>
         </div>
         
         <div class="card">
@@ -567,28 +614,24 @@
                     <span class="input-suffix">万元</span>
                 </div>
             </div>
-
+            
             <!-- 折扣率输入 (样式与金额框一致) -->
             <div class="input-group">
                 <label class="input-label">请输入折扣率</label>
                 <div class="input-container">
                     <!-- 使用乘号图标，代表打几折 -->
-                    <i class="fas fa-times input-icon"></i> 
+                    <i class="fas fa-times input-icon"></i>
                     <input type="number" id="discount" class="input-field" placeholder="输入折扣" min="0" max="1" step="0.01" value="1">
                     <span class="input-suffix">倍 (1为原价)</span>
                 </div>
             </div>
-
+            
             <!-- 按钮 -->
             <div class="btn-container">
-                <button class="btn btn-calculate" onclick="calculate()">
-                    <i class="fas fa-equals"></i> 计算费用
-                </button>
-                <button class="btn btn-reset" onclick="resetForm()">
-                    <i class="fas fa-redo"></i> 重置
-                </button>
+                <button class="btn btn-calculate" onclick="calculate()"><i class="fas fa-equals"></i> 计算费用</button>
+                <button class="btn btn-reset" onclick="resetForm()"><i class="fas fa-redo"></i> 重置</button>
             </div>
-
+            
             <!-- 结果显示 -->
             <div class="result-container" id="resultContainer">
                 <div class="result-title">计算结果</div>
@@ -600,7 +643,10 @@
                 
                 <div class="fee-label">应付总费用（人民币万元）</div>
                 
-                <div class="breakdown-title"><i class="fas fa-list"></i> 费用明细分解</div>
+                <div class="breakdown-title">
+                    <i class="fas fa-list"></i> 费用明细分解
+                </div>
+                
                 <table class="breakdown-table">
                     <thead>
                         <tr>
@@ -614,8 +660,20 @@
                         <!-- 动态生成 -->
                     </tbody>
                     <tfoot>
+                        <tr id="originalTotalRow" style="display:none;">
+                            <td class="total-label">原价总计：</td>
+                            <td class="total-value highlight" id="originalTotalCell">0.00 元</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr id="discountRateRow" style="display:none;">
+                            <td class="total-label">折扣率：</td>
+                            <td class="total-value" id="discountRateCell">1.00 倍</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
                         <tr>
-                            <td colspan="3" class="total-label">总计：</td>
+                            <td colspan="3" class="total-label">实付总计：</td>
                             <td class="total-value highlight" id="totalCell">0.00 元</td>
                         </tr>
                     </tfoot>
@@ -628,18 +686,21 @@
             <p style="margin-top: 8px; color: #718096; font-size: 0.9rem;">注：1万元 = 10,000元 | 费率单位：‰（千分比）</p>
         </div>
     </div>
-
+    
     <script>
         function calculate() {
             const assetInput = document.getElementById('asset');
             const discountInput = document.getElementById('discount');
             const asset = parseFloat(assetInput.value);
             const discount = parseFloat(discountInput.value) || 1;
-            
             const resultContainer = document.getElementById('resultContainer');
             const priceSection = document.getElementById('priceSection');
             const breakdownBody = document.getElementById('breakdownBody');
             const totalCell = document.getElementById('totalCell');
+            const originalTotalRow = document.getElementById('originalTotalRow');
+            const originalTotalCell = document.getElementById('originalTotalCell');
+            const discountRateRow = document.getElementById('discountRateRow');
+            const discountRateCell = document.getElementById('discountRateCell');
             
             // 验证输入
             if (isNaN(asset) || asset < 0) {
@@ -660,7 +721,7 @@
                 discountInput.focus();
                 return;
             }
-
+            
             // 计算逻辑
             let fee = 0;
             let breakdown = [];
@@ -748,11 +809,11 @@
                     fee: tierFee.toFixed(2)
                 });
             }
-
+            
             // 应用折扣
             const originalFee = fee;
             const discountedFee = fee * discount;
-
+            
             // 根据折扣率动态生成价格显示
             if (Math.abs(discount - 1) < 0.001) { // 折扣率为1，显示单一价格
                 priceSection.innerHTML = `
@@ -778,25 +839,53 @@
                     </div>
                 `;
             }
-
-            // 将万元转换为元用于明细表显示（1万元=10000元）
-            totalCell.textContent = `${(discountedFee * 10000).toFixed(2)} 元`;
-
+            
+            // 设置总计行显示
+            if (Math.abs(discount - 1) < 0.001) {
+                // 没有折扣或折扣为1，隐藏原价和折扣率行
+                originalTotalRow.style.display = 'none';
+                discountRateRow.style.display = 'none';
+                // 直接显示总计
+                totalCell.textContent = `${(discountedFee * 10000).toFixed(2)} 元`;
+            } else {
+                // 有折扣，显示原价、折扣率和实付总计
+                originalTotalRow.style.display = '';
+                originalTotalCell.textContent = `${(originalFee * 10000).toFixed(2)} 元`;
+                discountRateRow.style.display = '';
+                discountRateCell.textContent = `${discount.toFixed(2)} 倍`;
+                totalCell.textContent = `${(discountedFee * 10000).toFixed(2)} 元`;
+            }
+            
             // 清空并重新填充明细表
             breakdownBody.innerHTML = '';
-            breakdown.forEach(item => {
+            breakdown.forEach((item, index) => {
                 const row = document.createElement('tr');
+                // 添加档位类名
+                row.className = `tier-${index + 1}`;
+                
                 // 将该档费用从万元转换为元（乘以10000）
                 const feeInYuan = (parseFloat(item.fee) * 10000).toFixed(2);
+                
+                // 格式化数字，添加千分位分隔符
+                const formattedAmount = parseFloat(item.amount).toLocaleString('zh-CN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
+                const formattedFee = parseFloat(feeInYuan).toLocaleString('zh-CN', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+                
                 row.innerHTML = `
                     <td>${item.range}</td>
-                    <td>${parseFloat(item.amount).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${formattedAmount}</td>
                     <td>${item.rate}</td>
-                    <td>${parseFloat(feeInYuan).toLocaleString('zh-CN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td>${formattedFee}</td>
                 `;
                 breakdownBody.appendChild(row);
             });
-
+            
             // 显示结果区域
             resultContainer.style.display = 'block';
             resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -808,7 +897,7 @@
             document.getElementById('resultContainer').style.display = 'none';
             document.getElementById('asset').focus();
         }
-
+        
         // 回车键触发计算
         document.getElementById('asset').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -821,7 +910,7 @@
                 calculate();
             }
         });
-
+        
         // 页面加载后聚焦资产输入框
         window.onload = function() {
             document.getElementById('asset').focus();
